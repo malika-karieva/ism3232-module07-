@@ -1,5 +1,5 @@
-# Capstone Proposal: <Palms Rentals Housing Finder>
-Author: <Malika Karieva>
+# Capstone Proposal: Palms Rentals Housing Finder
+Author: Malika Karieva
 
 ## The business (2-3 sentences: who it serves, what goes wrong today)
 Palms Rentals is a housing rental agency in the Tampa Bay area. Customers use the chat to find the best available housing options based on their budget, preferred neighborhood, number of bedrooms and bathrooms, parking, and whether utilities are included, and they can request a tour that staff approve on the Staff tab. Today customers ask staff for this information every day, so the chat handles these requests and hands off anything about contracts, leases or payments to a staff member.
@@ -9,28 +9,28 @@ The chat: customers (renters). The Staff tab: staff.
 
 
 ## Tables                          -> Week 13 schema.sql
-<listings>: <listing_id> <TEXT PRIMARY KEY>, <title> <TEXT NOT NULL>, <neighborhood> <TEXT NOT NULL>, <monthly_rent> <REAL NOT NULL>, <bedrooms> <INTEGER NOT NULL>, <bathrooms> <REAL NOT NULL>, <pets_allowed> <INTEGER NOT NULL>, <furnished> <INTEGER NOT NULL>, <parking> <INTEGER NOT NULL>, <utilities_included> <INTEGER NOT NULL>, <available_from> <TEXT NOT NULL>, <status> <TEXT NOT NULL> 
+listings: listing_id TEXT PRIMARY KEY, title TEXT NOT NULL, neighborhood TEXT NOT NULL, monthly_rent REAL NOT NULL, bedrooms INTEGER NOT NULL, bathrooms REAL NOT NULL, pets_allowed INTEGER NOT NULL, furnished INTEGER NOT NULL, parking INTEGER NOT NULL, utilities_included INTEGER NOT NULL, available_from TEXT NOT NULL, status TEXT NOT NULL 
 example row: ('L1003', '2BR/2BA townhome, unfurnished', 'Seffner', 1750.00, 2, 2.0, 1, 0, 1, 0, '2027-01-01', 'available') 
 
-<neighborhoods>: <name> <TEXT PRIMARY KEY>, <typical_rent_1br> <REAL NOT NULL>, <commute_downtown_min> <INTEGER NOT NULL>, <grocery_within_mile> <INTEGER NOT NULL>, <bus_routes> <INTEGER NOT NULL> 
+neighborhoods: name TEXT PRIMARY KEY, typical_rent_1br REAL NOT NULL, commute_downtown_min INTEGER NOT NULL, grocery_within_mile INTEGER NOT NULL, bus_routes INTEGER NOT NULL 
 example row: ('Seffner', 1350.00, 25, 0, 1) 
 
-<tour_slots>: <slot_id> <TEXT PRIMARY KEY>, <listing_id> <TEXT NOT NULL>, <slot_time> <TEXT NOT NULL>, <booked_by> <TEXT NOT NULL> 
+tour_slots: slot_id TEXT PRIMARY KEY, listing_id TEXT NOT NULL, slot_time TEXT NOT NULL, booked_by TEXT NOT NULL 
 example row: ('T2003', 'L1003', '2026-12-05 11:00 am', 'nobody') 
 
-<change_requests>: <number> <INTEGER PRIMARY KEY AUTOINCREMENT>, <slot_id> <TEXT NOT NULL>, <new_value> <TEXT NOT NULL>, <status> <TEXT NOT NULL DEFAULT 'waiting'>
+change_requests: number INTEGER PRIMARY KEY AUTOINCREMENT, slot_id TEXT NOT NULL, new_value TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'waiting'
 no sample rows: requests appear when the agent files them
 
 ## Lookup tools (at least two)     -> Week 14 tools.py
-<search_listings>(<max_rent>, <min_bedrooms>, <min_bathrooms>, <neighborhood>, <parking>, <utilities_included>, <furnished>, <pets_allowed>): Find the best available listings for a budget, bedrooms, bathrooms and area, cheapest first (at most 3). Only the first three are required. Example question: "My budget is $1,900, I need 2 bedrooms and 2 bathrooms in Seffner"
+search_listings(max_rent, min_bedrooms, min_bathrooms, neighborhood, parking, utilities_included, furnished, pets_allowed): Find the best available listings for a budget, bedrooms, bathrooms and area, cheapest first (at most 3). Only the first three are required. Example question: "My budget is $1,900, I need 2 bedrooms and 2 bathrooms in Seffner"
 
-<get_listing>(<listing_id>): Look up all the facts about one listing. Example question: "Does L1002 allow pets?" get_neighborhood(name): Look up the typical rent, commute and nearby facts for one neighborhood. Example question: "How far is Brandon from downtown?" 
+get_listing(listing_id): Look up all the facts about one listing. Example question: "Does L1002 allow pets?" get_neighborhood(name): Look up the typical rent, commute and nearby facts for one neighborhood. Example question: "How far is Brandon from downtown?" 
 
-<get_tour_slots>(<listing_id>): List the open tour times for one listing (booked_by is 'nobody'). Example question: "When can I tour L1003?"
+get_tour_slots(listing_id): List the open tour times for one listing (booked_by is 'nobody'). Example question: "When can I tour L1003?"
 
 ## Change tool (at least one)      -> Week 14 tools.py, Week 15 Staff tab
 
-<request_tour>(slot_id, renter_name): Ask staff to book one tour slot. Staff must approve it. Approving sets tour_slots.booked_by to the renter's name and marks the request approved.
+request_tour(slot_id, renter_name): Ask staff to book one tour slot. Staff must approve it. Approving sets tour_slots.booked_by to the renter's name and marks the request approved.
 
 ## Handoff rule                    -> Week 14 agent.py (HANDOFF_WORDS)
 Words: contract, lease, sign, signing, signed, background check, credit score, credit check, social security, ssn, deposit back, evict, eviction, discrimination, repair, emergency, payment, card Why a person must handle these: contracts, payments and credit checks are legal and money commitments, Social Security numbers and card details must never reach the model, and repairs and emergencies are urgent. (Words are matched as whole words, so "lease" does not match "please".)
